@@ -109,13 +109,13 @@ print response.read()
 
 
 
-### Headers
+### 头文件
 
-As we have learned above, we can create a GET request using not only strings but also the [Request](https://docs.python.org/2/library/urllib2.html#urllib2.Request) class. This allows us, for example, to define custom headers.
+正如我们在上面所学到的,我们可以不仅可以用字符串还可以用[Request]等级(https://docs.python.org/2/library/urllib2.html#urllib2.Request)来创建一个GET请求.这就允许了我们,比如,定义自定义头.
 
-To craft our own header we create a headers dictionary, with the header key and the custom value. Then we create a Request object to the **urlopen** function call.
+制作我们自己的标题,使用头键和自定义值,我们创建了一个标题字典.然后我们创建一个请求对象到**urlopen**申请函数调用.
 
-For example, let's see how this works for the **User-Agent** header (which is the way the browser identifies itself) :
+例如,让我们看看**用户代理**头是如何工作的(这就是浏览器识别自己的方式) :
 
 ```python
 >>> headers = {}
@@ -143,7 +143,7 @@ The Server is:  gws
 ```
 
 
-We could also add headers with the **add_headers** method:
+我们也可以用**add_headers**方法添加标题:
 
 ```
 >>> request = urllib2.Request('http://www.google.com/')
@@ -153,54 +153,54 @@ We could also add headers with the **add_headers** method:
 ```
 
 
-### HTTP Authentication
+### HTTP身份验证
 
-When authentication is required, the server sends a header (and the **401 error code**) requesting this procedure. The response also specifies the **authentication scheme** and a **realm**. Something like this:
+当需要身份验证时,这个过程中服务器发送消息头(和**401错误代码**) 请求.响应同时也指定了**认证方案**和**范围**.像这样:
 
 ```
 WWW-Authenticate: SCHEME realm="REALM".
 ```
 
-The client then retries the request with the name and password for the realm, included as a header in the request. The steps for this process are the following:
+然后，客户机使用该域的名称和密码重新尝试请求,在请求中包含一个标题.在请求中包含一个标题:
 
-1) create a password manager,
+1) 创建密码管理器,
 
 ```
 passwd_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
 ```
 
-2) add the username and password,
+2) 添加用户名和密码,
 
 ```
 top_url = "http://example.com/"
 passwd_mgr.add_password(None, top_url, username, password)
 ```
 
-3) create an auth handler,
+3) 创建一个身份验证处理程序,
 
 ```
 handler = urllib2.HTTPBasicAuthHandler(password_mgr)
 ```
 
-4) create an *opener* (a OpenerDirector instance),
+4) 创建一个*opener* (OpenerDirector实例),
 
 ```
 opener = urllib2.build_opener(handler)
 ```
 
-5) use the opener to fetch a URL,
+5) 使用打开器获取URL,
 
 ```
 opener.open(a_url)
 ```
 
-6) install the opener,
+6) 安装器,
 
 ```
 urllib2.install_opener(opener)
 ```
 
-7) finally, open the page (where authentication is now handled automatically):
+7) 最后,打开页面(身份验证被自动处理):
 
 ```
 pagehandle = urllib2.urlopen(top_url)
@@ -209,9 +209,9 @@ pagehandle = urllib2.urlopen(top_url)
 
 
 
-### Error Handling
+### 错误处理
 
-**urllib2** has also methods for handling URL errors:
+**urllib2**错误处理:
 
 ```python
 >>> request = urllib2.Request('http://www.false_server.com')
@@ -222,59 +222,59 @@ pagehandle = urllib2.urlopen(top_url)
 (4, 'getaddrinfo failed')
 ```
 
-Every HTTP response from the server contains a numeric [status code](http://en.wikipedia.org/wiki/List_of_HTTP_status_codes). The default handlers take care some of these responses and for the others, **urlopen**  raises an **HTTPError** (which is a subclass of **URLError**).
+来自服务器的每个HTTP响应都包含一个数字的[状态码](http://en.wikipedia.org/wiki/List_of_HTTP_status_codes).默认的处理程序负责处理这些响应和其他的响应, **urlopen**提出了一个**HTTPError** (**URLError**的子集合).
 
 
-### Other Available Methods
+### 其他可用的方法
 
-Other available methods in the **urllib2** library:
+**urllib2**库中其他可用的方法:
 
-* **install_opener** and **build_opener**: install and return an OpenDirector instance.
+* **install_opener**和**build_opener**:安装并返回一个OpenDirector实例.
 
-* ** URLError** and **HTTPError**: raises exceptions for problems, handles exotic HTTP errors, and processes [HTTP error responses](https://docs.python.org/2/howto/urllib2.html#error-codes), respectively.
+* ** URLError**和**HTTPError**: 分别地对问题提出异常,处理外来的HTTP错误,和进行处理[HTTP错误响应](https://docs.python.org/2/howto/urllib2.html#error-codes).
 
-* **HTTPCookieProcessor**: handles HTTP cookies.
+* **HTTPCookieProcessor**: 处理HTTP cookies.
 
-* **HTTPProxyHandler**: sends requests to a proxy.
+* **HTTPProxyHandler**: 向代理发送请求.
 
-* **AbstractBasicAuthHandler**, **HTTPBasicAuthHandler**, **ProxyBasicAuthHandler**, **HTTPDigestAuthHandler**, **AbstractDigestAuthHandler**, **ProxyDigestAuthHandler**: handle authentications.
+* **AbstractBasicAuthHandler**, **HTTPBasicAuthHandler**, **ProxyBasicAuthHandler**, **HTTPDigestAuthHandler**, **AbstractDigestAuthHandler**, **ProxyDigestAuthHandler**: 处理认证.
 
-* **HTTPPasswordMgr** and **HTTPPasswordMgrWithDefaultRealm**: keep a database of realm, URL, user and passwords mappings.
+* **HTTPPasswordMgr**和**HTTPPasswordMgrWithDefaultRealm**: 保存一个域 URL 用户和密码映射的数据库.
 
-* **HTTPHandler**, **HTTPSHandler**, **FileHandler**, **FTPHandler**, **UnknownHandler**: handle sources.
-
-
-Available methods for the **Request** objects:
-
-* **add_data**, **has_data**, and **get_data**: deal with the Request data.
-* **add_header**, **add_unredirected_header**, **has_header**, **get_header**, **header_items**: deal with the header data.
-* **get_full_url**, **get_type**, **get_host**, **get_selector**, **set_proxy**, **get_origin_req_host**: deal with the URL data.
+* **HTTPHandler**, **HTTPSHandler**, **FileHandler**, **FTPHandler**, **UnknownHandler**: 处理消息.
 
 
-And let's not forget about **urllib**'s [urlparse](http://pymotw.com/2/urlparse/index.html#module-urlparse), which provides functions to analyze URL strings. **urlparse** breaks URL strings up in several optional  components: **scheme** (example: http), **location** (example: www.python.org:80), **path** (example: index.html), **query** and **fragment**.
+**Request**目标的可用方法:
 
-Other common functions are **urljoin** and **urlsplit**.
+* **add_data**, **has_data**和**get_data**:处理请求数据.
+* **add_header**, **add_unredirected_header**, **has_header**, **get_header**, **header_items**: 处理头数据.
+* **get_full_url**, **get_type**, **get_host**, **get_selector**, **set_proxy**, **get_origin_req_host**: 处理URL数据.
+
+
+我们不要忘记**urllib**的[urlparse](http://pymotw.com/2/urlparse/index.html#module-urlparse), 它提供了分析URL字符串的函数. **urlparse**在几个可选组件中中断URL字符串: **scheme** (实例: http), **location** (实例: www.python.org:80), **path** (实例: index.html), **query**和**fragment**.
+
+其他常见的函数是**urljoin**和**urlsplit**.
 
 
 
 
 ---
 
-## <a name="map"></a>Mapping Webapps from their Installation Packages
+## <a name="map"></a>从安装包中映射网页应用程序
 
-[Content management systems](http://en.wikipedia.org/wiki/Content_management_system) are platforms to make it easy to start blogs or  simple websites. They are  common in shared host environments. However, when all of the security procedures are not followed, they can be a easy target for attackers to gain access to the server.
+[内容管理系统](http://en.wikipedia.org/wiki/Content_management_system)是让创建博客或简单网站变得容易的平台.它们在共享宿主环境中很常见.但是, 当所有的安全过程都没有遵循时, 对于攻击者来说，他们可以很容易地访问服务器.
 
-In this session we are going to build a scanner that searches for all files that are reachable on the remote target, following the structure of the downloaded webapp. This is based in one of the examples of [Black Hat Python](http://www.nostarch.com/blackhatpython).
+在这部分中，我们将构建一个扫描器用以搜索远程目标上可访问的所有文件,以下是下载的网页应用程序的结构. 这是基于[Black Hat Python]的一个例子(http://www.nostarch.com/blackhatpython).
 
-This type of scanner can show installation files, directories that are not processed by [.htaccess](http://en.wikipedia.org/wiki/Htaccess), and other files that can be useful for an attack.
+这种类型的扫描器可以通过[.htaccess](http://en.wikipedia.org/wiki/Htaccess)显示安装文件,和未处理的目录, 以及其他一些对攻击有用的文件.
 
 
 
-### Crafting the Scanner
+### 制作扫描仪
 
-In our scanner script, we use Python's [Queue](https://docs.python.org/2/library/queue.html) objects  to build a large stack of items and multiple threads picking items for processing. This will make the scanner run very quickly. The steps are the following:
+在我们的扫描脚本中,我们利用Python的[Queue](https://docs.python.org/2/library/queue.html)对象来构建大量的项目和多个线程，挑选项目进行处理. 这将使扫描仪运行得非常快.步骤如下:
 
-1) We define the target URL (in this case we are borrowing the example from the book), the number of threads, the local directory where we downloaded and extracted the webapp, and a filter with the file extensions we are not interested on:
+1) 我们定义目标URL(在本例中，我们借用了书上的例子),线程的数量, 我们下载并提取webapp的本地目录以及带有我们不感兴趣的文件扩展的过滤器:
 
 ```python
 import urllib2
@@ -288,7 +288,7 @@ DIRECTORY = '/home/User/Desktop/wordpress'
 FILTERS = ['.jpg', '.css', '.gif', '.png']
 ```
 
-2) We define a function with a loop that keeps executing until the queue  with the paths is empty. On each iteration we get one of these paths and add it to the target URL to see whether it exists (outputting the HTTP status code):
+2) 我们用一个循环来定义一个函数，这个循环一直执行，直到有路径的队列是空的. 在每次迭代中，我们都会得到其中一条路径并将它添加到目标URL中，以查看它是否存在(输出HTTP状态码):
 
 ```python
 def test_remote():
@@ -307,7 +307,7 @@ def test_remote():
             print "Failed" + str(error.code)
 ```
 
-3) The main loop first creates the queue for paths and then use the **os.walk** method to map all the files and directories in the local version of the webapp, adding the names to the queue (after being filtered by our custom extension list):
+3) 主循环首先为路径创建队列然后用**os.walk**方法在网页应用程序的本地版本中映射所有文件和目录,将名称添加到队列中(经过我们的自定义扩展列表筛选后):
 
 ```python
 if __name__ == '__main__':
@@ -322,7 +322,7 @@ if __name__ == '__main__':
                 web_paths.put(remote_path)
 ```
 
-4) Finally, we create the threads that will be sent to our function **test_remote**. The loop is kept until the path queue is empty:
+4) 最后, 我们创建将被发送到函数的线程**test_remote**.循环被保留，直到路径队列为空:
 
 ```python
     for i in range(THREADS):
@@ -332,12 +332,12 @@ if __name__ == '__main__':
 ```
 
 
-### Testing the Scanner
+### 测试扫描仪
 
-Now we are ready to test our scanner. We download and test three webapps: [WordPress](https://en-ca.wordpress.org/download/), [Drupal](https://www.drupal.org/project/download), and [Joomla 3.1.1](http://www.joomla.org/announcements/release-news/5499-joomla-3-1-1-stable-released.html).
+现在我们准备测试我们的扫描器. 我们下载并测试三个网页应用程序: [WordPress](https://en-ca.wordpress.org/download/), [Drupal](https://www.drupal.org/project/download),和[Joomla 3.1.1](http://www.joomla.org/announcements/release-news/5499-joomla-3-1-1-stable-released.html).
 
 
-Running first for Joomla gives the following results:
+运行第一个Joomla给出以下结果:
 
 ```sh
 $ python mapping_web_app_install.py
@@ -362,7 +362,7 @@ Spawning thread number: 10
 ```
 
 
-Running for Wordpress:
+用Wordpress运行:
 
 ```sh
 (...)
@@ -381,7 +381,7 @@ Running for Wordpress:
 (...)
 ```
 
-Finally, running for Drupal, we only get five files:
+最后,用Drupal运行,我们只得到5个文件:
 
 ```sh
 (...)
@@ -392,23 +392,23 @@ Finally, running for Drupal, we only get five files:
 [200] => /download.info
 ```
 
-In all of these results we are able to find some nice results including XML and txt files. This  recon can be the start of an attack. Really cool.
+在所有这些结果中，我们能够找到一些不错的结果，包括XML和txt文件. 这个侦察可以是攻击的开始.酷毙了.
 
 
 
 
 -----
 
-## <a name="brute1"></a>Brute-Forcing the Contents of Webapps
+## <a name="brute1"></a>强力网页应用程序的内容
 
-In general we are not aware about the  structure of files that are accessible in a web server (we don't have the webapp available like in the previous example). Usually we can deploy a spider, like in the [Burp suite](http://portswigger.net/burp/),  to crawl the target and find them. However this might not be able to find sensitive files such as, for example, development/configuration files and debugging scripts.
+一般来说，我们不知道在web服务器中可以访问的文件的结构(我们没有像之前的例子那样使用网页应用程序). 通常我们可以部署一只蜘蛛, 就像在[Burp suite](http://portswigger.net/burp/)中,爬上目标并找到它们.然而，这可能无法找到诸如此类的敏感文件, 例如, 开发/配置文件和调试脚本.
 
-The best way to find sensitive files is to brute-force common filenames and directories. How do we do this?
+发现敏感文件的最佳方式是蛮力共同的文件名和目录.我们该怎么做呢?
 
-It turns out that the  task is really easy when we already have word lists for directory and files. These lists can be downloaded from sources such as the [DirBurster](https://www.owasp.org/index.php/Category:OWASP_DirBuster_Project) project or [SVNDigger](https://www.netsparker.com/blog/web-security/svn-digger-better-lists-for-forced-browsing/).
+当我们已经有了目录和文件的单词列表时，任务就变得很简单了. 这些列表可以从源代码就像[DirBurster](https://www.owasp.org/index.php/Category:OWASP_DirBuster_Project)项目或是[SVNDigger](https://www.netsparker.com/blog/web-security/svn-digger-better-lists-for-forced-browsing/)中下载.
 
 
-Since scanning third party websites is not legal, we are going to use *play* websites, which are available for testing. Some examples (from [here](http://blog.taddong.com/2011/10/hacking-vulnerable-web-applications.html)):
+因为浏览第三方网站是不合法的,我们将会使用可供测试的*play*网站.若干例子(来自[here](http://blog.taddong.com/2011/10/hacking-vulnerable-web-applications.html)):
 
 * [testphp.vulnweb.com](http://testphp.vulnweb.com)
 * [testasp.vulnweb.com](http://testasp.vulnweb.com)
@@ -426,15 +426,15 @@ Since scanning third party websites is not legal, we are going to use *play* web
 * [pentesteracademylab.appspot.com](http://pentesteracademylab.appspot.com)
 
 
-### Writing the Script
-In our script we accept word lists for common names of files and directories and use them to attempt to discover reachable paths on the server.
+### 写脚本
+在我们的脚本中，我们接受文件的通用名称列表和目录并使用它们来尝试在服务器上发现可到达的路径.
 
-In the same way as before, we can achieve a reasonable speed by creating pool of threads to discover the contents.
+以如以前同样的方式,我们可以通过创建线程池来发现内容以达到一个合理的速度.
 
-The steps of our script are:
+我们脚本的步骤是:
 
 
-1) We define the target, the number of threads, the path for the wordlist (which I made available [here](https://github.com/bt3gl/My-Gray-Hacker-Resources/tree/master/Other_Hackings/useful_lists/files_and_dir_lists)), a rogue User-Agent, and the filter list of extensions that we want to look at:
+1) 我们定义目标, 线程的数量, 单词列表的路径 (我提供的 [here](https://github.com/bt3gl/My-Gray-Hacker-Resources/tree/master/Other_Hackings/useful_lists/files_and_dir_lists)), 一个流氓用户代理, 以及我们想要查看的扩展的过滤列表:
 
 ```python
 import urllib2
@@ -449,7 +449,7 @@ USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64l rv:19.0) Gecko/20100101 Firefox/19
 EXTENSIONS = ['.php', '.bak', '.orig', '.inc']
 ```
 
-2) We create a function that read our word list, and then add each of this words into a queue for the words, returning this queue:
+2) 我们创建一个函数来读取我们的单词列表, 然后将每个单词添加到队列中,返回此队列:
 
 ```python
 def build_wordlist(WORDLIST_FILE):
@@ -463,7 +463,7 @@ def build_wordlist(WORDLIST_FILE):
     return words
 ```
 
-3) We create a function that loops over the size of the queue, checking whether it's a directory or a file (using the extension list), and then brute-forcing the target URL for each of these words:
+3) 我们创建了一个循环超过队列大小的函数, 检查它是一个目录还是一个文件(使用扩展列表),然后强力爆破这些URL:
 
 
 ```python
@@ -493,7 +493,7 @@ def dir_bruter(word_queue, TARGET, EXTENSIONS=None):
                 pass
 ```
 
-4) In the main loop, we build the word list and then we spawn the tread for our **dir_bruter** function:
+4) 在主循环中,我们建立单词列表然后为我们的**dir_bruter**函数创建环境:
 
 ```python
 if __name__ == '__main__':
@@ -505,9 +505,9 @@ if __name__ == '__main__':
         t.start()
 ```
 
-### Running the Script
+### 运行脚本
 
-Running this against one of the web application targets will print something like this:
+在网页应用程序目标中运行此操作会打印出这样的东西:
 
 ```sh
 $ python brute_forcing_locations.py
@@ -522,7 +522,7 @@ $ python brute_forcing_locations.py
 (...)
 ```
 
-Pretty neat!
+非常整洁!
 
 
 
@@ -532,7 +532,7 @@ Pretty neat!
 
 -----
 
-## Further References:
+## 其他:
 
 - [Form Contents](http://www.w3.org/TR/REC-html40/interact/forms.html#h-17.13.4)
 - [A robot.txt parser](http://pymotw.com/2/robotparser/index.html#module-robotparser)
