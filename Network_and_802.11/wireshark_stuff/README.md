@@ -306,32 +306,32 @@ Wireshark主要的GUI包含四个部分：
 
 Wireshark有几个可以用来学习包和网络的工具：
 
-* **Statistics -> IO Graphs**: Allows to graph throughput of data. For instance, you can use graphs to find peaks in the data, discover performance bottlenecks in individual protocols, and compare data streams. Filtering is available in this interface (for example, to show ARP and DHCP traffic).
+* **Statistics -> IO Graphs**: 允许图形化的数据吞吐量。例如，你可以使用图形来查找数据中的峰值，发现各个协议中的性能瓶颈，并比较数据流。此接口提供过滤功能（例如，显示ARP和DHCP流量）。
 
-* **Statistics -> TCP -> Stream Graph -> Round Trip Time Graph**:  Allows to  plot **round-trip times** (RTT) for a given capture file. This is the time it takes for an acknowledgment to be received from a sent packet.
+* **Statistics -> TCP -> Stream Graph -> Round Trip Time Graph**: 允许制作给定捕获的文件的 **来回通讯延迟** (RTT)。这是从数据包发送到接收确认信息所需的时间。
 
-* **Statistics -> Flow Graph**: Timeline-based representation of communication statistics (based on time intervals). It allows the visualization of connections and the flow of data over time.  A flow graph contains a column-based view of a connection between hosts and organizes the traffic. This analysis can show slow points or bottlenecks and determine if there is any latency.
+* **Statistics -> Flow Graph**: 基于时间轴的通信统计表示（基于时间间隔）。它允许可视化连接和数据随时间的变化。流程图包含主机之间基于列的连接视图，并组织流量。这个分析可以展示慢点（slow point）和瓶颈，并决定是否有延迟。
 
-* **Statistics -> Summary**: Returns a report about the entire process by features such as interface, capture duration and number, and size of packets.
+* **Statistics -> Summary**: 返回一个对于整个进程的各项性能，如接口，抓包延迟和序号，以及数据包的大小。
 
-* **Statistics -> Protocol Hierarchy**: Shows statistical information of different protocols  in a *nodal form*.  It arranges the protocols according to its layers, presenting them in percentage form. For example, if you know that your network usually gets 15%  ARP traffic, if you see a value such as 50%, you know something is wrong.
+* **Statistics -> Protocol Hierarchy**: 以 *nodal形式* 展示不同协议的统计数据。它根据所处的层安排协议，将它们以百分比形式展示。比如，如果你值得你的网络通常是15%的流量，如果你看见如50%的值，你就知道有错误产生了。
 
-* **Statistics -> Conversations**: Shows the address of the endpoints involved in the conversation.
+* **Statistics -> Conversations**: 展示对话中的端点地址。
 
-* **Statistics -> Endpoints**: Similar to conversations, reflecting the statistics of traffic to and from an IP address. For example, for TCP, it can look like  **SYN, SYN/ACK, SYN**.
+* **Statistics -> Endpoints**: 和对话相同，显示了从一个IP发出和到达的流量统计。比如，对于TCP，它将是 **SYN, SYN/ACK, SYN**。
 
-* **Edit-> Finding Packet or CTRL-F**: Finds packets that match to some criteria. There are three options:
-    * *Display filter*:  expression-based filter (for example **not ip**, **ip addr==192.168.0.10**,  or **arp**).
-    * *Hex value*: packets with a hexadecimal (for example 00:ff, ff:ff).
-    * *String*:  packets with a text string (for example admin or workstation).
+* **Edit-> Finding Packet or CTRL-F**: 找到与某个标准相匹配的数据包。这里有三个选项：
+    * *Display filter*: 基于表达式的过滤器(例如 **not ip**, **ip addr==192.168.0.10**，或者 **arp**).
+    * *Hex value*: 十六进制数据包（例如 00:ff, ff:ff).
+    * *String*:  具有文本字符串的数据包(例如 admin 或者 workstation).
 
-* **Right click -> Follow TCP Stream**: Reassembles TCP streams into an  readable format (instead of having the data being in small chunks). The text displayed in *red* to signifies traffic from the source to the destination, and in  *blue* identifies traffic in the opposite direction. If you know the stream number (value to be followed to get various data packets), you can also use the following filter for the same purpose:
+* **右击 -> Follow TCP Stream**: 将TCP数据流变成可读的形式（而不是以块存储的数据）。 *红色* 文本表示从源到目的的流量， *蓝色* 表示相反方向的流量。如果你知道流序号（可以用来得到多种数据包的值），你也可以使用下面的过滤器来达到同样的结果：
 
 ```
 tcp.stream eq <number>
 ```
 
-* **Right click -> Mark Packet or CTRL+M**: Helps to organization of relevant packets.
+* **右击 -> Mark Packet or CTRL+M**: 有助于组织相关数据包。
 
 
 
@@ -339,283 +339,283 @@ tcp.stream eq <number>
 ---
 ##  过滤器
 
-### The Berkeley Packet Filter Syntax
-Wireshark's filtering is a very powerful feature. It uses the [Berkeley Packet Filter](http://en.wikipedia.org/wiki/Berkeley_Packet_Filter) (BFP) syntax.  The syntax corresponds to an **expression** which is made of one more **primitives**. These primitives can have  one or more **qualifier**, which are defined below:
+### Berkeley数据包过滤器语法
 
-* **Type**:  ID name or number (for example: **host**, **net**, **port**).
-* **Dir**: transfer direction to or from the ID name or number (for example: **src** and **dst**).
-* **Proto**: restricts the match to a particular protocol (for example: **ether**, **ip**, **tcp**, **udp**, or **http**)
+Wireshark的过滤是一个非常强大的特性。它使用[Berkeley数据包过滤器](http://en.wikipedia.org/wiki/Berkeley_Packet_Filter) (BFP)语法。语法对应一个有多个 **原语** 组成的 **表达式** 。这些原语可以有一个或多个 **限定符** ，定义如下：
 
-A example of primitive is:
+* **Type**:  ID名或者序号(例如： **host**, **net**, **port**).
+* **Dir**: 改变发到这个ID名或序号/从此ID名或序号发出的方向 (例如: **src** and **dst**).
+* **Proto**: 限制与一个特定的协议匹配(例如: **ether**, **ip**, **tcp**, **udp**, or **http**)
+
+一个原语的示例：
 ```
 dst host 192.168.0.10
 ```
-where **dst host** is the qualifier, and the IP address is the ID.
+这里面 **dst host** 是限定符，IP地址是ID。
 
-### Types of Filters
-Packages can be filtering in two ways:
+### 过滤器类型
+数据包可以以两种方式过滤：
 
-* **Capture filters**: specified when packets are being captured. This method is good for performance of large captures.
-* **Display filters**: applied to an existing set of collected packets. This method gives more versatility since you have the entire data available.
+* **抓包过滤器**: 在捕获数据包的时候指定。这种方法对于大流量的捕获的性能是很好的。
+* **显示过滤器**: 应用于现有收集的数据包。这种方法提供了多样功能，因为你可以使用整个数据。
 
-In the following sessions I  show several examples of capture and display  filters.
+在下面的部分我会展示几个capture和display过滤器的例子。
 
-### Capture Filters by Host Address and Name
+### 针对主机地址和主机名抓包过滤
 
-* Traffic associated with a host's IPV4 address (also works for a IPv6 network).
-
+* 与主机的IPV4地址相关联的流量（也适用于IPV6网络）。
 ```
 host 172.16.16.150
 ```
 
-* Traffic to or from a range of IP addresses:
+* 发送到或者来自一个网段内的IP地址的流量：
 
 ```
 net 192.168.0.0/24
 ```
 
-* Device's hostname with the host qualifier:
+* 设备的主机名和主机限定符：
 
 ```
 host testserver
 ```
 
-* If you are concerned that the IP address for a host changed, you can filter based on MAC address:
+* 如果你担心主机的IP地址会发生更改，你可以基于MAC地址过滤：
 
 ```
 ether host ff-ff-ff-ff-ff-aa
 ```
 
-* Only traffic coming from a particular host (host is an optional qualifier):
+* 只有来自特定主机的流量（主机是一个可选择的限定符）：
 
 ```
 src host 172.16.16.150
 ```
 
-* All the traffic leaving a host:
+* 从某个主机发出的所有流量：
 
 ```
 dst host 172.16.16.150
 ```
 
-* Only  traffic to or from IP address 173.15.2.1
+* 只从IP地址为173.15.2.1的主机发送或来自此主机的流量：
 
 ```
 host 173.15.2.1
 ```
 
-* Traffic from a range of IP addresses:
+* 来自一个网段内的IP地址：
 
 ```
 src net 192.168.0.0/24
 ```
 
 
-### Capture Filters by Ports
+### 针对端口抓包过滤
 
-* Only traffic on port 8000:
+* 仅在8000端口上的流量:
 
 ```
 port 8000
 ```
 
-* All traffic except on port 443:
+* 除了端口443上的所有流量:
 
 ```
 !port 443
 ```
 
-* Traffic going to a host listening on 80:
+* 监听80端口的主机的流量:
 
 ```
 dst port 80
 ```
 
-* Traffic within a range of port:
+* 一系列端口上的流量:
 
 ```
 tcp portrange 1501-1549
 ```
 
-* Both inbound and outbound traffic on port 80 and 21:
+* 在端口80和21进和出的流量:
 
 ```
 port 80 || port == 21
 ```
 
-* Only non-http and non-SMTP traffic (equivalent):
+* 只有非http和非SMTP的流量（等同）：
 
 ```
 host www.example.com and not (port 80 or port 25)
 ```
 
-### Capture Filters by  Protocols
+### 针对协议抓包过滤
 
-* Capture only unicast traffic (useful to get rid of noise on the network):
+* 捕捉单播流量(有助于回避网络噪声):
 
 ```
 not broadcast and not multicast
 ```
 
-*  ICMP traffic only:
+*  仅ICMP流量：
 
 ```
 icmp
 ```
 
 
-* Drop ARP packets:
+* 丢弃ARP数据包:
 
 ```
 !arp
 ```
 
-* Drop IPv6 traffic:
+* 丢弃IPv6流量:
 
 ```
 !ipv6
 ```
 
-* DNS traffic:
+* DNS流量:
 
 ```
 dns
 ```
 
-* Clear text email traffic:
+* 清空文本邮件流量:
 
 ```
 smtp || pop || imap
 ```
 
-### Capture Filters  by Packet's  Properties
+### 针对数据包性质抓包过滤
 
-* TCP packets with SYN flag set:
+* 设置SYN标识的TCP数据包：
 
 ```
 tcp[13]&2==2
 ```
 
-* ICMP packets with destination unreachable (type 3):
+* 目的不可达的ICMP数据包(type 3):
 
 ```
 icmp[0]==3
 ```
 
-*  HTTP GET requests (bytes 'G','E','T' are hex values 47, 45, 54):
+*  HTTP GET请求(bytes 'G','E','T' 是十六进制值 47, 45, 54):
 
 ```
 port 80 and tcp[((tcp[12:1] & 0xf0 ) >> 2  ):4 ] = 0x47455420
 ```
 
 ---
-### Display Filters by Host Address and Name
+### 针对主机地址和主机名进行显示过滤
 
 
-* Filter by IP address:
+* 针对IP地址过滤:
 
 ```
 ip.addr == 10.0.0.1
 ```
 
-* IP source address field:
+* IP源地址域:
 
 ```
 ip.src == 192.168.1.114
 ```
 
-* IP address src/dst for a network range:
+* 一个网段的IP地址的src/dst:
 
 ```
 ip.addr== 192.168.1.0/24
 ```
 
-### Display Filters by Ports
+### 针对端口的显示过滤
 
-* Any TCP packet with 4000 as a source or destination port:
+* 任意以4000作为源端口号和目的端口号的TCP数据包：
 
 ```
 tcp.port == 4000
 ```
 
-* Source port:
+* 源端口号:
 
 ```
 tcp.srcport == 31337
 ```
 
-### Display Filters by  Protocols
+### 针对协议进行显示过滤
 
-* Drops  arp, icmp, dns, or whatever other protocols may be background noise:
+* 丢弃arp, icmp, dns, 或者其他任何可能产生后部噪声的协议：
 
 ```
 !(arp or icmp or dns)
 ```
 
-* Displays all re-transmissions in the trace (helps when tracking down slow application performance and packet loss):
+* 显示路径中所有的重传(有助于跟踪性能低的应用表现和丢包):
 
 ```
 tcp.analysis.retransmission
 ```
 
-* ICMP Type field to find all PING packets:
+* ICMP类型域来找到所有的PING包:
 
 ```
 icmp.type== 8
 ```
 
-### Display Filters  by Packet's  Properties
+### 针对数据包性质进行显示过滤
 
-* Displays all HTTP GET requests:
+* 显示所有的HTTP GET请求：
 
 ```
 http.request
 ```
 
-* Display all POST requests:
+* 显示所有的POST请求:
 
 ```
 http.request.method == "POST"
 ```
 
-* Filter for the HEX values:
+* 对十六进制值进行过滤:
 
 ```
 udp contains 33:27:58
 ```
 
-* Sequence number field in a TCP header:
+* TCP头部的序列号域:
 
 ```
 tcp.seq == 52703261
 ```
 
 
-* Packets that are less than 128 bytes in length:
+* 长度小于128字节的数据包:
 
 ```
 frame.len <= 128
 ```
 
-* TCP packets with SYN flag set:
+* 设置SYN表示的TCP数据包:
 
 ```
 tcp.flags.syn == 1
 ```
 
-* TCP packets with RST flag set:
+* 设置RST标识的TCP数据包:
 
 ```
 tcp.flags.rst == 1
 ```
 
-* Displays all TCP resets:
+* 显示所有的TCP重置:
 
 ```
 tcp.flags.reset == 1
 ```
 
-* IP flags where fragment bit is not set (see if someone is trying ping):
+* 不设置段bit的IP标识(判断是否有人在尝试ping):
 
 ```
 ip.flags.df == 0
@@ -683,36 +683,37 @@ In **Active Fingerprinting**, the attacker actively sends crafted packets to the
 ---
 
 
-## Some Forensics Tips
+## 一些取证方面的提示
 
-### DNS Queries
+### DNS查询
 
-Look at different DNS queries that are made while the user was online. A possible filter is:
+当用户在线的时候查看用户所做的不同的DNS查询。 一个可能的过滤器是：
 
 ```
 dsn
 ```
-This will give a view of any malicious DNS request done without the knowledge of the user. An example is a case where a  visited website has a hidden **iframe** with some malicious script inside.
 
-### HTTP GET Headers
+这将显示出在用户未知的情况下完成的恶意的DNS请求。一个例子是，在访问过的网站中找到隐藏的带有恶意脚本的 **iframe**。
 
-Look for different HTTP streams that have flown during the network activity:  HTML, JavaScript,  image traffic, 302 redirections, non-HTTP streams, Java Archive downloads, etc. A possible filter is:
+### HTTP GET 头部
+
+查看网络活动中的不同HTTP流：HTML, JavaScript,  image traffic, 302 redirections, non-HTTP streams, Java Archive downloads, 等。一个可能的过滤器是：
 
 ```
 http
 ```
-You can also look at different GET requests  with:
+你也可以使用这个来查看不同的GET请求：
 
 ```
 tcp contains "GET"
 ```
 
-### Checking for DNS Leaks with VMs
+### 使用虚拟机检查DNS泄露
 
-In a virtual machine look at **statistics --> Endponts**. There should be only one public IP address: the VPN server that the virtual machine is connected to.
+在虚拟机中查看 **statistics --> Endponts**，应该只有一个公共IP地址：这个虚拟机连接的VPN服务器。
 
 ---
-## ARP Cache Poisoning
+## ARP缓存污染
 
 ### Sniffing
 
@@ -751,31 +752,32 @@ However, a technique called **channel hopping** allows quick change between chan
 
 
 
-### Wireless NIC  modes
+### 无线网卡模式
 
-Wireless network cards can have four modes:
+网卡有四种模式：
 
-* **Managed**: when the wireless client connects directly to a wireless access point (WAP).
+* **Managed**: 无线客户端与无线接入点(WAP)直接连接。
 
-* **ad hoc mode**:   devices connect directly to each other, sharing the responsibility of  a WAP.
+* **ad hoc mode**:  设备之间直接连接，与WAP共享功能。
 
-* **Master mode**: the NIC works with specialized software to allow the computer act as a WAP for other devices.
+* **Master mode**: 无线网卡与特定的软件合作来使计算机允许其他设备使用WAP。
 
-* **Monitor**: used to stop transmitting and receiving data, and start listening to the packets flying in the air.
+* **Monitor**: 用来禁止传输和接收数据，并开始监听传输中的数据包。
 
-To access the wireless extensions in Linux you can type:
+为了获得Linux中的无线扩展你可以输入：
 
 ```
 $ iwconfig
 ```
 
-To change the interface (for example eth1) to monitor mode, you type:
+为了接口（比如eth1）转换为监听模式，你可以输入：
+
 ```
 $ iwconfig eth1 mode monitor
 $ iwconfig eth1 up
 ```
 
-To change the channel of the interface:
+改变端口通道：
 
 ```
 $ iwconfig eth` channel 4
