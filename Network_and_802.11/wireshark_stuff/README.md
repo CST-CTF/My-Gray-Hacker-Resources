@@ -623,62 +623,60 @@ ip.flags.df == 0
 
 
 --------------------------------------
-#  Using Wireshak for Security
+#  为了安全使用Wireshak
 
 
-## Some Reconnaissance Tips
+## 一些侦察提示
 
-### Network Scan with SYN
+### 使用SYN扫描网络
 
-A  TCP SYN scan is fast and reliable  method to scan ports and services in a network. It is also less noisy than other scanning techniques.
+TCP SYN扫描是一种快速稳定的扫描网络中端口和服务的方法。它比其他扫描技术少很多噪声。
 
-Basically, it relies on the three-way handshake process to determine which ports are open on a target host:
+基本上，它依赖于三次握手进程来决定目标主机上打开的端口：
 
-1. The attacker sends a TCP SYN packet to a range of ports on the victim.
+1. 攻击向受攻击主机上的一系列端口发送一个TCP SYN数据包。
 
-2. Once this packet is received by the victim, the follow response will be observed:
+2. 一旦这个数据包被目标主机接收，它将会有如下响应：
 
-    * **Open ports**: replies with a TCP SYN/ACK packet (three times). Then the attacker knows that port is open and a service is listening on it.
+    * **开放端口**: 依赖于一个TCP SYN/ACK数据包（三次）。然后攻击者直到端口是打开的，服务正在监听。
 
-    * **Closed ports, not filtered**: the attacker receives a RST response.
+    * **关闭端口，未被过滤**: 攻击者接收RST响应。
 
-    * **Filtered ports** (by a firewall, for example): the attacker does not receive any response.
+    * **被过滤的端口** (通过防火墙，比如): 攻击者不接受任何响应。
 
 
-### Operating System Fingerprint
+### 操作系统指纹
 
-Technique to determine the operating system on a system without have access to it.
+在位置的情况下确定设备上的操作系统类型的技术。
 
-In a **Passive Fingerprinting**, an attacker can use certain fields within packets sent from the target to craft a stealthy fingerprinting.
+在 **被动指纹** 中，攻击者可以使用从目标发送的数据包中的某些字段来制作隐形指纹。
 
-This is possible due the lack of specificity by protocol's [RFCs](http://en.wikipedia.org/wiki/Request_for_Comments): although the various fields contained in the TCP, UDP and IP headers are very specific, no default values are defined for these fields.
+由于协议的[RFCs](http://en.wikipedia.org/wiki/Request_for_Comments)缺乏特异性，允许了这一情况的发生：虽然TCP，UDP和IP头中包含的各个字段非常具体，但没有为这些字段定义默认值。
 
-For instance, the following header values can help one to distinguish between several operating systems:
+比如，以下的几个头部值可以帮助你区分几个操作系统：
 
 * **IP, Initial Time to Live**:
-    - 64 for Linux, Mac OS
-    - 128 for Windows
-    - 255 for Cisco IOS
+    - Linux, Mac OS：64
+    - Windows：128
+    - Cisco IOS：255
 * **IP, Don't Fragment Flag**:
-    - Set for Linux, Mac OS, Windows
-    - Not set for Cisco IOS
+    - Linux, Mac OS, Windows有设置
+    - Cisco IOS无
 * **TCP, Max Segment Size**:
-    - 1440 for Windows
-    - 1460 for Mac OS 10, Linux
+    - Windows：1440
+    - Mac OS 10, Linux：1460
 * **TCP, Window Size**:
-    - 2920-5840 for Linux
-    - 4128 for Cisco  IOS
-    - 65535 for for Mac OS 10
-    - variable for Windows
+    - Linux：2920-5840
+    - Cisco IOS：4128
+    - Mac OS 10：65535
+    - Windows：任意值
 * **TCP, StackOK**:
-    - Set for Linux, Windowns
-    - Not set for Cisco IOS, Mac OS 10
+    - Linux, Windowns有设置
+    - Cisco IOS, Mac OS 10无
 
-Note: A nice tool using operating system fingerprinting techniques is [p0f](http://lcamtuf.coredump.cx/p0f3/).
+注意：一个很好的使用操作系统指纹的技术是[p0f](http://lcamtuf.coredump.cx/p0f3/).
 
-
-
-In **Active Fingerprinting**, the attacker actively sends crafted packets to the victim whose replies reveal the OS. This can be done with [Nmap](http://nmap.org/).
+在 **主动指纹** 中，攻击者主动地向受攻击主机发送构建好的数据包，并以回复来判断操作系统类型。这可以使用[Nmap](http://nmap.org/)来完成。
 
 ---
 
@@ -717,38 +715,39 @@ tcp contains "GET"
 
 ### Sniffing
 
-ARP cache poisoning  allows tapping into the wire with Wireshark. This can be used for good or for evil.
+ARP缓存污染允许利用Wireshark接入网线。这可以用于好的目的，也可以用于恶意攻击。
 
-The way this works is the following: all devices on a network communicate with each other on layer 3 using IP addresses. Because switches operate on layer 2 they only see MAC addresses, which are usually cached.
+这个方法是这样工作的：网络上的所有设备使用IP地址在第3层相互通信。因为交换机在第2层上工作，通常只能看到被缓存的MAC地址。
 
-When a MAC address is not in the cache list, ARP broadcasts a packet asking which IP address owns some MAC address. The destination machine replies to the packet with its MAC address via an ARP reply (as we have learned above). So,  at this point, the transmitting computer has the data link layer addressing the information it needs to communicate with the remote computer. This information is then stored into the ARP cache.
+当MAC地址不在缓存列表中时，ARP广播询问哪个IP地址拥有某个MAC地址。目的机器通过ARP应答回复数据包及其MAC地址（如上所述）。因此，这个时候，发送计算机具有能够寻址需要与远程计算机通信的信息的数据链路层，然后将信息存储在ARP缓存中。
 
-An attacker can spoof this process by  sending ARP messages to an Ethernet switch or router with fake MAC  addresses in order to intercept the traffic of another computer.
+攻击者可以通过向具有假MAC地址的以太网交换机或路由器发送ARP消息来构造此过程，以拦截另一台计算机的流量。
 
-In Linux, ARP spoofing can be done with [arpspoof or Ettercap](http://www.irongeek.com/i.php?page=security/arpspoof). For instance, if  your wlan0 is at 192.168.0.10 and the router is at 192.168.0.1, you can run:
+在Linux，可以使用[arpspoof或Ettercap](http://www.irongeek.com/i.php?page=security/arpspoof)来进行ARP欺骗。例如，如果你的wlan0在192.168.0.10，路由器在192.168.0.1，你可以运行：
 
 ```
 $ arpspoof -i wlan0 -t 192.168.0.10 192.168.0.1
 ```
 
-If you are in Windows, ARP cache poising can be crafted using [Cain & Abel](http://www.oxid.it/cain.html).
+如果你使用Windows，你可以使用[Cain和Abel](http://www.oxid.it/cain.html)来构建ARP缓存污染。
 
 
 ### Denial-of-Service
 
-In  networks with very high demand, when you reroute traffic, everything  transmitted and received by the target system must first go through your analyzer system. This makes  your analyzer the bottleneck in the communication process and being suitable to cause [DoS](http://en.wikipedia.org/wiki/Denial-of-service_attack).
+在需求非常高的网络中，当你重新路由流量时，目标系统发送和接收的所有信息必须首先通过分析系统。这使您的分析系统称为通信过程中的瓶颈，可能会引起[DoS](http://en.wikipedia.org/wiki/Denial-of-service_attack).
 
-You might be able avoid all the traffic going through your analyzer system by using a feature called [asymmetric routing](http://www.cisco.com/web/services/news/ts_newsletter/tech/chalktalk/archives/200903.html).
+你可能可以使用一个[非对称路由](http://www.cisco.com/web/services/news/ts_newsletter/tech/chalktalk/archives/200903.html)的特性来躲避在你的分析系统上传输的所有流量。
 
 ---
-## Wireless Sniffing
+## 无线嗅探
 
-### The 802.11 Spectrum
-The unique difference when capturing traffic from a **wireless local area network** (WLAN) is that the wireless spectrum is a **shared medium** (unlike wired networks, where each client has it own cable to the switch).
+### The 802.11 频谱
 
-A single WLAN occupy a portion of the [802.11 spectrum](http://en.wikipedia.org/wiki/IEEE_802.11), allowing multiple systems to operate in the same physical medium. In the US, 11 channels are available and a WLAN can operate only one channel at time (and so the sniffing).
+从 **无线局域网** (WLAN) 中捕获流量的特殊之处在于无线频谱是一个 **共享介质** （与有线网络不同，每个客户端都有自己的电缆连接到交换机）。
 
-However, a technique called **channel hopping** allows quick change between channels to collect data. A tool to perform this is [kismet](https://www.kismetwireless.net/), which can hop up to 10 channels/second.
+单个WLAN占用[802.11频谱](http://en.wikipedia.org/wiki/IEEE_802.11)的一部分，允许多个系统在同样的物理介质中运行。在美国，有11个通道可用，WLAN在一段时间内只能运行在一个通道中(嗅探也是一样）。.
+
+但是，一个叫做 **channel hopping** 的技术允许通道间数据的收集和交换。用来完成这个的工具是[kismet](https://www.kismetwireless.net/)，速度可达10通道/秒。
 
 
 
